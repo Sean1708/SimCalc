@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <read.h>
 
 
@@ -8,9 +9,18 @@ int main(int argc, char* argv[]) {
 
     while (1) {
         line = rl_gets(">> ");
-        printf("%s\n", line);
 
-        if (line[0] == 'e') break;
+        if (line == NULL) {
+            printf("Goodbye!\n");
+            break;
+        } else if (line[0] == '$') {
+            printf("$ %s\n", line+1);
+            if (line[1] == 'e') break;
+        } else if (isdigit(line[0])) {
+            printf("= %s\n", line);
+        } else {
+            printf("! I got none of that.\n");
+        }
     }
 
     if (line) free(line);
