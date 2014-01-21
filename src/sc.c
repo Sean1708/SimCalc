@@ -13,13 +13,10 @@ int main(int argc, char* argv[]) {
         if (line == NULL) {
             printf("Goodbye!\n");
             break;
-        } else if (line[0] == '$') {
-            printf("$ %s\n", line+1);
-            if (line[1] == 'e') break;
-        } else if (isdigit(line[0])) {
-            printf("= %s\n", line);
         } else {
-            printf("! I got none of that.\n");
+            YY_BUFFER_STATE buf = yy_scan_string(line);
+            yyparse();
+            yy_delete_buffer(buf);
         }
     }
 
