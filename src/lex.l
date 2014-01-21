@@ -2,13 +2,13 @@
 #include "parse.h"
 %}
 
-INTEGER [1-9][0-9]*
-HEX     0x[0-9]+
-OCTAL   0[0-9]+
-BINARY  0b[0-9]+
+DECIMAL [1-9][0-9]*
+HEXADEC 0x[0-9a-eA-E]+
+OCTAL   0[0-7]+
+BINARY  0b[01]+
 
 FLOAT   [0-9]+\.[0-9]*
-STDFORM [0-9]+\.?[0-9]*[eE][+-][0-9]+
+STDFORM [0-9]+\.?[0-9]*[eE][+-]?[0-9]+
 
 %option noyywrap
 
@@ -16,17 +16,23 @@ STDFORM [0-9]+\.?[0-9]*[eE][+-][0-9]+
 %%
 
 
-{INTEGER}      { yylval.ival = strtoll(yytext, NULL, 10); return INT; }
+{DECIMAL}      { yylval.ival = strtoll(yytext, NULL, 10); return INT;   }
 
-{FLOAT}        { yylval.fval = strtold(yytext, NULL); return FLT;     }
+{HEXADEC}      { yylval.ival = strtoll(yytext+2, NULL, 16); return INT; }
 
-{STDFORM}      { printf("Std: %s\n", yytext);                         }
+{OCTAL}        { yylval.ival = strtoll(yytext+1, NULL, 8); return INT;  }
 
-[-+()*/^\n]    { return *yytext;                                      }
+{BINARY}       { yylval.ival = strtoll(yytext+2, NULL, 2); return INT;  }
+
+{FLOAT}        { yylval.fval = strtold(yytext, NULL); return FLT;       }
+
+{STDFORM}      { yylval.fval = strtold(yytext, NULL); return FLT;       }
+
+[-+()*/^\n]    { return *yytext;                                        }
 
 [ \t]+         /* eat whitespace */
 
-.              { fprintf(stderr, "Unknown token: %s\n", yytext);      }
+.              { fprintf(stderr, "Unknown token: %s\n", yytext);        }
 
 
 %%
