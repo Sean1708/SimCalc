@@ -17,7 +17,7 @@ void yyerror(const char* msg);
 %type  <fval> fxpr
 
 %left  '-' '+'
-%left  '*' '/' '%' POW
+%left  '*' '/' '%' POW FDIV
 %left  NEG
 %right '^'
 
@@ -67,13 +67,17 @@ fxpr:
 ;
 
 ixpr:
-  INT                { $$ = $1;      }
-| ixpr '+' ixpr      { $$ = $1 + $3; }
-| ixpr '-' ixpr      { $$ = $1 - $3; }
-| ixpr '*' ixpr      { $$ = $1 * $3; }
-| ixpr '%' ixpr      { $$ = $1 % $3; }
-| '-' ixpr %prec NEG { $$ = -$2;     }
-| '(' ixpr ')'       { $$ = $2;      }
+  INT                { $$ = $1;                                    }
+| ixpr '+' ixpr      { $$ = $1 + $3;                               }
+| ixpr '-' ixpr      { $$ = $1 - $3;                               }
+| ixpr '*' ixpr      { $$ = $1 * $3;                               }
+| ixpr FDIV ixpr     { long double a=$1, b=$3; $$ = floorl(a / b); }
+| ixpr FDIV fxpr     { $$ = floorl($1 / $3);                       }
+| fxpr FDIV ixpr     { $$ = floorl($1 / $3);                       }
+| fxpr FDIV fxpr     { $$ = floorl($1 / $3);                       }
+| ixpr '%' ixpr      { $$ = $1 % $3;                               }
+| '-' ixpr %prec NEG { $$ = -$2;                                   }
+| '(' ixpr ')'       { $$ = $2;                                    }
 ;
 
 
