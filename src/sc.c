@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <read.h>
+#include <parse.h>
+#include <lex.h>
 
 
 int main(int argc, char* argv[]) {

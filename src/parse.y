@@ -24,12 +24,9 @@ void yyerror(const char* msg);
 %output "parse.c"
 %defines
 
-
-%%
-
-
+/*
 input:
-  /* empty */
+  /* empty *//*
 | input line
 ;
 
@@ -39,6 +36,19 @@ line:
 | ixpr '\n'  { printf("= %lld\n", $1);   }
 | error '\n' { yyerrok;                  }
 ;
+*/
+
+
+%%
+
+
+input:
+  /* empty */
+| fxpr  { printf("= %.10Lg\n", $1); }
+| ixpr  { printf("= %lld\n", $1);   }
+| error { yyerrok;                  }
+;
+
 
 fxpr:
   FLT                { $$ = $1;                         }
@@ -82,8 +92,4 @@ ixpr:
 
 void yyerror(const char* msg) {
     fprintf(stderr, "! %s\n", msg);
-}
-
-int main(void) {
-    return yyparse();
 }

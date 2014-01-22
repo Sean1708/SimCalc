@@ -10,6 +10,7 @@ BINARY  0b[01]+
 FLOAT   [0-9]+\.[0-9]*
 STDFORM [0-9]+\.?[0-9]*[eE][+-]?[0-9]+
 
+%option header-file="lex.h"
 %option noyywrap
 
 
@@ -28,6 +29,7 @@ STDFORM [0-9]+\.?[0-9]*[eE][+-]?[0-9]+
 
 {STDFORM}      { yylval.fval = strtold(yytext, NULL); return FLT;       }
 
+ /* readline does not return \n, try using \0 as well */
 [-+*/^%()\n]   { return *yytext;                                        }
 
 [ \t]+         /* eat whitespace */
