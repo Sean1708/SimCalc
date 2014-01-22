@@ -1,5 +1,5 @@
 %{
-#include "parse.h"
+#include <parse.h>
 %}
 
 DECIMAL [1-9][0-9]*
