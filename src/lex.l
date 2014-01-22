@@ -28,11 +28,11 @@ STDFORM [0-9]+\.?[0-9]*[eE][+-]?[0-9]+
 
 {STDFORM}      { yylval.fval = strtold(yytext, NULL); return FLT;       }
 
-[-+()*/^\n]    { return *yytext;                                        }
+[-+*/^%()\n]   { return *yytext;                                        }
 
 [ \t]+         /* eat whitespace */
 
-.              { fprintf(stderr, "Unknown token: %s\n", yytext);        }
+.              { fprintf(stderr, "! unknown token: %s\n", yytext);      }
 
 
 %%
