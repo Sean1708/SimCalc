@@ -16,10 +16,11 @@ void yyerror(const char* msg);
 %type  <ival> ixpr
 %type  <fval> fxpr
 
-%left  '-' '+'
-%left  '*' '/' '%' POW FDIV
-%left  NEG
-%right '^'
+%left     '-' '+'
+%left     '*' '/' '%' FDIV
+%nonassoc NEG
+%right    '^' POW 
+%nonassoc '!'
 
 %output "parse.c"
 %defines
