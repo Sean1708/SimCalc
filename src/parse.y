@@ -20,7 +20,7 @@ void yyerror(const char* msg);
 %left     '*' '/' '%' FDIV
 %nonassoc NEG
 %right    '^' POW 
-%nonassoc '!'
+%nonassoc FAC
 
 %output "parse.c"
 %defines
@@ -31,9 +31,9 @@ void yyerror(const char* msg);
 
 input:
   /* empty */
-| fxpr  { printf("= %.10Lg\n", $1); }
-| ixpr  { printf("= %lld\n", $1);   }
-| error { yyerrok;                  }
+| fxpr   { printf("= %.10Lg\n", $1); }
+| ixpr   { printf("= %lld\n", $1);   }
+| error  { yyerrok;                  }
 ;
 
 
@@ -62,8 +62,6 @@ fxpr:
 | fxpr POW ixpr      { $$ = powl($1, $3);               }
 | ixpr '^' fxpr      { $$ = powl($1, $3);               }
 | ixpr POW fxpr      { $$ = powl($1, $3);               }
-| ixpr '^' ixpr      { $$ = powl($1, $3);               }
-| ixpr POW ixpr      { $$ = powl($1, $3);               }
 | '(' fxpr ')'       { $$ = $2;                         }
 ;
 
@@ -78,6 +76,18 @@ ixpr:
 | fxpr FDIV fxpr     { $$ = floorl($1 / $3);                       }
 | ixpr '%' ixpr      { $$ = $1 % $3;                               }
 | '-' ixpr %prec NEG { $$ = -$2;                                   }
+| ixpr '^' ixpr      { $$ = powl($1, $3);                          }
+| ixpr POW ixpr      { $$ = powl($1, $3);                          }
+| ixpr '!' %prec FAC {
+    if ($1 < 0) {
+        yyerror("factorial undefined for negative numbers");
+    } else if ($1 == 0) {
+        $$ = 1;
+    } else {
+        $$ = 1;
+        for (long long i = $1; i > 0; i--) $$ *= i;
+    }
+}
 | '(' ixpr ')'       { $$ = $2;                                    }
 ;
 

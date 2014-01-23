@@ -42,7 +42,7 @@ BADBIN  0b[01]*[2-9]+
 0+             { yylval.fval = 0; return FLT;                            }
 
     /* OPERATORS */
-[-+*/^%()]     { return *yytext;                                         }
+[-+*/^%!()]     { return *yytext;                                         }
 
  /* python style power */
 "**"           { return POW;                                             }
