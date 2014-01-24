@@ -19,7 +19,7 @@ void yyerror(const char* msg);
 %left     '-' '+'
 %left     '*' '/' '%' FDIV
 %nonassoc NEG
-%right    '^' POW 
+%right    POW 
 %nonassoc FAC
 
 %output "parse.c"
@@ -63,6 +63,16 @@ fxpr:
 | fxpr POW fxpr      { $$ = powl($1, $3);               }
 | fxpr POW ixpr      { $$ = powl($1, $3);               }
 | ixpr POW fxpr      { $$ = powl($1, $3);               }
+| fxpr '!'           {
+    if ($1 < 0) {
+        yyerror("factorial undefined for negative numbers");
+    } else if (fmod($1, 1) != 0) {
+        yyerror("factorial undefined for floating-point numbers");
+    } else {
+        $$ = 1;
+        for (long double i = $1; i > 0; i--) $$ *= i;
+    }
+}
 | '(' fxpr ')'       { $$ = $2;                         }
 ;
 
@@ -81,8 +91,6 @@ ixpr:
 | ixpr '!' %prec FAC {
     if ($1 < 0) {
         yyerror("factorial undefined for negative numbers");
-    } else if ($1 == 0) {
-        $$ = 1;
     } else {
         $$ = 1;
         for (long long i = $1; i > 0; i--) $$ *= i;
