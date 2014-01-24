@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <proto.h>
 
@@ -82,6 +83,7 @@ fxpr:
         for (long double i = $1; i > 0; i--) $$ *= i;
     }
 }
+| '|' fxpr '|'       { $$ = fabsl($2);                  }
 | '(' fxpr ')'       { $$ = $2;                         }
 ;
 
@@ -105,6 +107,7 @@ ixpr:
         for (long long i = $1; i > 0; i--) $$ *= i;
     }
 }
+| '|' ixpr '|'       { $$ = llabs($2);                             }
 | '(' ixpr ')'       { $$ = $2;                                    }
 ;
 

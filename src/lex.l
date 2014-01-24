@@ -11,7 +11,7 @@ BINARY  0b[01]+
 
     /* FLOATS */
 FLOAT   [0-9]+\.[0-9]*
-STDFORM [0-9]+\.?[0-9]*[eE][+-]?[0-9]+
+STDFORM [0-9]+\.?[0-9]*[eE][-+]?[0-9]+
 
     /* INVALID NUMBERS */
 BADHEX  0x[0-9a-eA-e]*[f-zF-Z]+
@@ -39,11 +39,12 @@ BADBIN  0b[01]*[2-9]+
 
 {STDFORM}    { yylval.fval = strtold(yytext, NULL); return FLT;        }
 
- /* handle one or more zeros on their own */
-0+           { yylval.fval = 0; return FLT;                            }
+ /* handle one or more zeros on their own
+    set as integer to avoid loss of precision on int-only input */
+0+           { yylval.ival = 0; return INT;                            }
 
         /* OPERATORS */
-[-+*/%!()\n] { return *yytext;                                         }
+[-+*/%!()|\n] { return *yytext;                                        }
 
  /* power operators */
 "**"|"^"     { return POW;                                             }
