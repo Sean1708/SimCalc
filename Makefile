@@ -18,7 +18,7 @@ all: sc install
 
 sc: lex.l parse.y read.c read.h sc.c
 	$(LEX)  -t src/lex.l > lex.c
-	$(YACC) --report all src/parse.y
+	$(YACC)  src/parse.y
 	$(CC) $(CFLAGS)  -c -o lex.o  lex.c
 	$(CC) $(CFLAGS)  -c -o parse.o  parse.c
 	$(CC) $(CFLAGS)  -c -o read.o  src/read.c

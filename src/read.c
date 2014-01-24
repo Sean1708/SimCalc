@@ -24,7 +24,7 @@ char* rl_gets(char* prompt) {
         add_history(rl_line);
 
         /* append newline to the end so bison parses properly */
-        /* int len = strlen(rl_line);
+        int len = strlen(rl_line);
         void* memcheck = realloc(rl_line, len + 2);
 
         if (memcheck != NULL) {
@@ -35,7 +35,7 @@ char* rl_gets(char* prompt) {
 
             rl_line[0] = '\n';
             rl_line[1] = '\0';
-        }*/
+        }
     }
 
 

@@ -42,7 +42,7 @@ BADBIN  0b[01]*[2-9]+
 0+             { yylval.fval = 0; return FLT;                            }
 
     /* OPERATORS */
-[-+*/^%!()]     { return *yytext;                                         }
+[-+*/^%!()\n]  { return *yytext;                                         }
 
  /* python style power */
 "**"           { return POW;                                             }
@@ -51,7 +51,7 @@ BADBIN  0b[01]*[2-9]+
 "//"           { return FDIV;                                            }
 
     /* STRUCTURE */
-[ \t\n]+         /* eat whitespace */
+[ \t]+         /* eat whitespace */
 
     /* ERRORS */
 {BADHEX}       { fprintf(stderr, "! invalid hexadecimal: %s\n", yytext); }

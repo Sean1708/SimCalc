@@ -31,11 +31,15 @@ void yyerror(const char* msg);
 
 input:
   /* empty */
-| fxpr   { printf("= %.10Lg\n", $1); }
-| ixpr   { printf("= %lld\n", $1);   }
-| error  { yyerrok;                  }
+| input line
 ;
 
+line:
+  '\n'
+| fxpr '\n'  { printf("= %.10Lg\n", $1); }
+| ixpr '\n'  { printf("= %lld\n", $1);   }
+| error '\n' { yyerrok;                  }
+;
 
 fxpr:
   FLT                { $$ = $1;                         }
