@@ -92,7 +92,15 @@ ixpr:
 | ixpr '+' ixpr      { $$ = $1 + $3;                               }
 | ixpr '-' ixpr      { $$ = $1 - $3;                               }
 | ixpr '*' ixpr      { $$ = $1 * $3;                               }
-| ixpr FDIV ixpr     { long double a=$1, b=$3; $$ = floorl(a / b); }
+| ixpr FDIV ixpr     {
+    /* if the result is negative this will be truncated not floored */
+    long long x = $1 / $3;
+    if (x < 0) {
+        $$ = x - 1;
+    } else {
+        $$ = x;
+    }
+}
 | ixpr FDIV fxpr     { $$ = floorl($1 / $3);                       }
 | fxpr FDIV ixpr     { $$ = floorl($1 / $3);                       }
 | fxpr FDIV fxpr     { $$ = floorl($1 / $3);                       }
