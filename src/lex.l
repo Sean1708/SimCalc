@@ -26,41 +26,41 @@ BADBIN  0b[01]*[2-9]+
 
 
     /* NUMBERS */
-{DECIMAL}      { yylval.ival = strtoll(yytext, NULL, 10); return INT;    }
+{DECIMAL}    { yylval.ival = strtoll(yytext, NULL, 10); return INT;    }
 
-{HEXADEC}      { yylval.ival = strtoll(yytext+2, NULL, 16); return INT;  }
+{HEXADEC}    { yylval.ival = strtoll(yytext+2, NULL, 16); return INT;  }
 
-{OCTAL}        { yylval.ival = strtoll(yytext+1, NULL, 8); return INT;   }
+{OCTAL}      { yylval.ival = strtoll(yytext+1, NULL, 8); return INT;   }
 
-{BINARY}       { yylval.ival = strtoll(yytext+2, NULL, 2); return INT;   }
+{BINARY}     { yylval.ival = strtoll(yytext+2, NULL, 2); return INT;   }
 
-{FLOAT}        { yylval.fval = strtold(yytext, NULL); return FLT;        }
+{FLOAT}      { yylval.fval = strtold(yytext, NULL); return FLT;        }
 
-{STDFORM}      { yylval.fval = strtold(yytext, NULL); return FLT;        }
+{STDFORM}    { yylval.fval = strtold(yytext, NULL); return FLT;        }
 
  /* handle one or more zeros on their own */
-0+             { yylval.fval = 0; return FLT;                            }
+0+           { yylval.fval = 0; return FLT;                            }
 
     /* OPERATORS */
-[-+*/^%!()\n]  { return *yytext;                                         }
+[-+*/%!()\n] { return *yytext;                                         }
 
- /* python style power */
-"**"           { return POW;                                             }
+ /* power operators */
+"**"|"^"     { return POW;                                             }
 
  /* floor division */
-"//"           { return FDIV;                                            }
+"//"         { return FDIV;                                            }
 
     /* STRUCTURE */
-[ \t]+         /* eat whitespace */
+[ \t]+       /* eat whitespace */
 
     /* ERRORS */
-{BADHEX}       { fprintf(stderr, "! invalid hexadecimal: %s\n", yytext); }
+{BADHEX}     { fprintf(stderr, "! invalid hexadecimal: %s\n", yytext); }
 
-{BADOCT}       { fprintf(stderr, "! invalid octal: %s\n", yytext);       }
+{BADOCT}     { fprintf(stderr, "! invalid octal: %s\n", yytext);       }
 
-{BADBIN}       { fprintf(stderr, "! invalid binary: %s\n", yytext);      }
+{BADBIN}     { fprintf(stderr, "! invalid binary: %s\n", yytext);      }
 
-.              { fprintf(stderr, "! unknown token: %s\n", yytext);       }
+.            { fprintf(stderr, "! unknown token: %s\n", yytext);       }
 
 
 %%

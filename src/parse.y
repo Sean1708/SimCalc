@@ -60,11 +60,8 @@ fxpr:
 | fxpr '%' ixpr      { $$ = fmodl($1, $3);              }
 | ixpr '%' fxpr      { $$ = fmodl($1, $3);              }
 | '-' fxpr %prec NEG { $$ = -$2;                        }
-| fxpr '^' fxpr      { $$ = powl($1, $3);               }
 | fxpr POW fxpr      { $$ = powl($1, $3);               }
-| fxpr '^' ixpr      { $$ = powl($1, $3);               }
 | fxpr POW ixpr      { $$ = powl($1, $3);               }
-| ixpr '^' fxpr      { $$ = powl($1, $3);               }
 | ixpr POW fxpr      { $$ = powl($1, $3);               }
 | '(' fxpr ')'       { $$ = $2;                         }
 ;
@@ -80,7 +77,6 @@ ixpr:
 | fxpr FDIV fxpr     { $$ = floorl($1 / $3);                       }
 | ixpr '%' ixpr      { $$ = $1 % $3;                               }
 | '-' ixpr %prec NEG { $$ = -$2;                                   }
-| ixpr '^' ixpr      { $$ = powl($1, $3);                          }
 | ixpr POW ixpr      { $$ = powl($1, $3);                          }
 | ixpr '!' %prec FAC {
     if ($1 < 0) {
