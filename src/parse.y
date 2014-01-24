@@ -1,9 +1,9 @@
 %{
 #include <stdio.h>
 #include <math.h>
+#include <proto.h>
 
 int yylex(void);
-void yyerror(const char* msg);
 %}
 
 %union {
@@ -25,14 +25,23 @@ void yyerror(const char* msg);
 %output "parse.c"
 %defines
 
+%error-verbose
+
+
+/*
+ * the following, which is common in many interpreters, is not needed at the
+ * moment since EOF is handled before yyparse() is called. it may be useful at a
+ * later date though especially if file reading is implemented
+
+input:
+  /* empty
+| input line
+;
+ */
+
 
 %%
 
-
-input:
-  /* empty */
-| input line
-;
 
 line:
   '\n'
@@ -66,7 +75,7 @@ fxpr:
 | fxpr '!'           {
     if ($1 < 0) {
         yyerror("factorial undefined for negative numbers");
-    } else if (fmod($1, 1) != 0) {
+    } else if (fmodl($1, 1) != 0) {
         yyerror("factorial undefined for floating-point numbers");
     } else {
         $$ = 1;
@@ -103,6 +112,13 @@ ixpr:
 %%
 
 
-void yyerror(const char* msg) {
-    fprintf(stderr, "! %s\n", msg);
+void yyerror(const char* fmt, ...) {
+    va_list argp;
+    va_start(argp, fmt);
+
+    fprintf(stderr, "! ");
+    vfprintf(stderr, fmt, argp);
+    fprintf(stderr, "\n");
+
+    va_end(argp);
 }

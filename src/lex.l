@@ -1,5 +1,6 @@
 %{
 #include <parse.h>
+#include <proto.h>
 %}
 
     /* INTEGERS */
@@ -25,7 +26,7 @@ BADBIN  0b[01]*[2-9]+
 %%
 
 
-    /* NUMBERS */
+        /* NUMBERS */
 {DECIMAL}    { yylval.ival = strtoll(yytext, NULL, 10); return INT;    }
 
 {HEXADEC}    { yylval.ival = strtoll(yytext+2, NULL, 16); return INT;  }
@@ -41,7 +42,7 @@ BADBIN  0b[01]*[2-9]+
  /* handle one or more zeros on their own */
 0+           { yylval.fval = 0; return FLT;                            }
 
-    /* OPERATORS */
+        /* OPERATORS */
 [-+*/%!()\n] { return *yytext;                                         }
 
  /* power operators */
@@ -50,17 +51,17 @@ BADBIN  0b[01]*[2-9]+
  /* floor division */
 "//"         { return FDIV;                                            }
 
-    /* STRUCTURE */
+        /* STRUCTURE */
 [ \t]+       /* eat whitespace */
 
-    /* ERRORS */
-{BADHEX}     { fprintf(stderr, "! invalid hexadecimal: %s\n", yytext); }
+        /* ERRORS */
+{BADHEX}     { yyerror("invalid hexadecimal: %s", yytext);             }
 
-{BADOCT}     { fprintf(stderr, "! invalid octal: %s\n", yytext);       }
+{BADOCT}     { yyerror("invalid octal: %s", yytext);                   }
 
-{BADBIN}     { fprintf(stderr, "! invalid binary: %s\n", yytext);      }
+{BADBIN}     { yyerror("invalid binary: %s", yytext);                  }
 
-.            { fprintf(stderr, "! unknown token: %s\n", yytext);       }
+.            { yyerror("unknown token: %s", yytext);                   }
 
 
 %%
