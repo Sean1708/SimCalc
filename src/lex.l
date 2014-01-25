@@ -27,42 +27,42 @@ BADBIN  0b[01]*[2-9]+
 
 
         /* NUMBERS */
-{DECIMAL}    { yylval.ival = strtoll(yytext, NULL, 10); return INT;    }
+{DECIMAL}     { yylval.ival = strtoll(yytext, NULL, 10); return INT;    }
 
-{HEXADEC}    { yylval.ival = strtoll(yytext+2, NULL, 16); return INT;  }
+{HEXADEC}     { yylval.ival = strtoll(yytext+2, NULL, 16); return INT;  }
 
-{OCTAL}      { yylval.ival = strtoll(yytext+1, NULL, 8); return INT;   }
+{OCTAL}       { yylval.ival = strtoll(yytext+1, NULL, 8); return INT;   }
 
-{BINARY}     { yylval.ival = strtoll(yytext+2, NULL, 2); return INT;   }
+{BINARY}      { yylval.ival = strtoll(yytext+2, NULL, 2); return INT;   }
 
-{FLOAT}      { yylval.fval = strtold(yytext, NULL); return FLT;        }
+{FLOAT}       { yylval.fval = strtold(yytext, NULL); return FLT;        }
 
-{STDFORM}    { yylval.fval = strtold(yytext, NULL); return FLT;        }
+{STDFORM}     { yylval.fval = strtold(yytext, NULL); return FLT;        }
 
  /* handle one or more zeros on their own
     set as integer to avoid loss of precision on int-only input */
-0+           { yylval.ival = 0; return INT;                            }
+0+            { yylval.ival = 0; return INT;                            }
 
         /* OPERATORS */
-[-+*/%!()|\n] { return *yytext;                                        }
+[-+*/%!()|;\n] { return *yytext;                                        }
 
  /* power operators */
-"**"|"^"     { return POW;                                             }
+"**"|"^"      { return POW;                                             }
 
  /* floor division */
-"//"         { return FDIV;                                            }
+"//"          { return FDIV;                                            }
 
         /* STRUCTURE */
-[ \t]+       /* eat whitespace */
+[ \t]+        /* eat whitespace */
 
         /* ERRORS */
-{BADHEX}     { yyerror("invalid hexadecimal: %s", yytext);             }
+{BADHEX}      { yyerror("invalid hexadecimal: %s", yytext);             }
 
-{BADOCT}     { yyerror("invalid octal: %s", yytext);                   }
+{BADOCT}      { yyerror("invalid octal: %s", yytext);                   }
 
-{BADBIN}     { yyerror("invalid binary: %s", yytext);                  }
+{BADBIN}      { yyerror("invalid binary: %s", yytext);                  }
 
-.            { yyerror("unknown token: %s", yytext);                   }
+.             { yyerror("unknown token: %s", yytext);                   }
 
 
 %%

@@ -7,6 +7,8 @@
 # Executables
 sc
 
+# Build files
+install
+
 # Tests
 *_tests
-calc.py

@@ -30,25 +30,27 @@ int yylex(void);
 
 
 /*
- * the following, which is common in many interpreters, is not needed at the
- * moment since EOF is handled before yyparse() is called. it may be useful at a
- * later date though especially if file reading is implemented
-
-input:
-  /* empty
-| input line
-;
+ * input section is not needed at the moment since EOF is handled before yyparse
+ * is even called but may be useful once sc can handle files
  */
-
-
 %%
 
 
+input:
+  /* empty */
+| input line
+;
+
 line:
-  '\n'
-| fxpr '\n'  { printf("= %.10Lg\n", $1); }
-| ixpr '\n'  { printf("= %lld\n", $1);   }
-| error '\n' { yyerrok;                  }
+  endchar
+| fxpr endchar  { printf("= %.10Lg\n", $1); }
+| ixpr endchar  { printf("= %lld\n", $1);   }
+| error endchar { yyerrok;                  }
+;
+
+endchar:
+  ';'
+| '\n'
 ;
 
 fxpr:

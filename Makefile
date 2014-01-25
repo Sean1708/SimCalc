@@ -16,6 +16,10 @@ vpath %_tests.c tests
 # THE BUILD
 all: sc install
 
+install: sc
+	install  bin/sc  ~/.scripts
+	touch install
+
 sc: lex.l parse.y read.c read.h sc.c
 	$(LEX)  -t src/lex.l > lex.c
 	$(YACC) --report all  src/parse.y
@@ -24,9 +28,6 @@ sc: lex.l parse.y read.c read.h sc.c
 	$(CC) $(CFLAGS)  -c -o read.o  src/read.c
 	$(CC) $(CFLAGS) $(LIBS)  parse.o lex.o read.o src/sc.c  -o bin/sc
 	rm lex.c lex.h lex.o parse.c parse.h parse.o read.o
-
-install:
-	install  bin/sc  ~/.scripts
 
 
 # THE TESTS
