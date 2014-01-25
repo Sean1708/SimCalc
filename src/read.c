@@ -1,4 +1,5 @@
 #include <read.h>
+#include <global.h>
 
 /**
  * Contains the return value of readline and is used to prevent memory leaks
@@ -31,7 +32,7 @@ char* rl_gets(char* prompt) {
             rl_line[len] = '\n';
             rl_line[len+1] = '\0';
         } else {
-            fprintf(stderr, "! memory error\n");
+            yyerror("memory error");
 
             rl_line[0] = '\n';
             rl_line[1] = '\0';

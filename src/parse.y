@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <proto.h>
+#include <global.h>
 
 int yylex(void);
 %}
@@ -43,9 +43,9 @@ input:
 
 line:
   endchar
-| fxpr endchar  { printf("= %.10Lg\n", $1); }
-| ixpr endchar  { printf("= %lld\n", $1);   }
-| error endchar { yyerrok;                  }
+| fxpr endchar  { printf("%s%.10Lg\n", outprompt, $1); }
+| ixpr endchar  { printf("%s%lld\n", outprompt, $1);   }
+| error endchar { yyerrok;                             }
 ;
 
 endchar:
@@ -126,6 +126,8 @@ ixpr:
 
 
 void yyerror(const char* fmt, ...) {
+    if (qflag) return;
+
     va_list argp;
     va_start(argp, fmt);
 

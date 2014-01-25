@@ -1,6 +1,6 @@
 %{
 #include <parse.h>
-#include <proto.h>
+#include <global.h>
 %}
 
     /* INTEGERS */
