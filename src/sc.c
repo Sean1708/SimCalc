@@ -22,7 +22,8 @@ int main(int argc, char* argv[]) {
             /* suppress input and output prompts and error messages */
             case 'q':
                 qflag = 1;
-                inprompt = "";
+                /* inprompt should only be NULL in quiet mode */
+                inprompt = NULL;
                 outprompt = "\0";
                 break;
             /* help message */

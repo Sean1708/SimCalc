@@ -8,5 +8,6 @@
 #include <readline/history.h>
 
 char* rl_gets(char* prompt);
+char* non_readline_readline();
 
 #endif  // __READ_H__
