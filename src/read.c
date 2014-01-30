@@ -1,44 +1,64 @@
 #include <read.h>
 #include <global.h>
 
-/**
- * Contains the return value of readline and is used to prevent memory leaks
- * when calling readline from rl_gets().
- */
-static char* rl_line;
+
+static char* rl_line = NULL;
 
 /**
  * Read a line from stdin using GNU Readline and save it in history if not
  * blank. Taken from the GNU Readline docs.
+ *
+ * Honestly the method seems like a bit of a hack but realloc was causing memory
+ * leaks/errors galore.
+ *
+ * Basically, readline doesn't return a trailing newline (for ease of use with
+ * add_history) but bison requires the newline to work properly. Originally this
+ * was done by assigning rl_line to [non_readline_]readline then reallocating
+ * the result so it had room to append a newline. Apparently this was vile sin.
+ *
+ * Instead I use a temporary pointer and allocate then copy instead of
+ * reallocating. If a null pointer or empty string is returned then no newline
+ * needs to be appended and so rl_line can just be set to temp and can be freed
+ * later. Similarly, if malloc fails.
  */
 char* rl_gets(char* prompt) {
-    /* if string has been allocated, free it to prevent memory leaks */
     if (rl_line) {
         free(rl_line);
         rl_line = NULL;
     }
 
+    char* temp = NULL;
+
     if (prompt == NULL) {
-        rl_line = non_readline_readline();
+        temp = non_readline_readline();
     } else {
-        rl_line = readline(prompt);
+        temp = readline(prompt);
     }
 
     /* only add to history list if line has text in it */
-    if (rl_line && *rl_line) {
-        add_history(rl_line);
+    if (temp && *temp) {
+        add_history(temp);
 
         /* append newline to the end so bison parses properly */
-        int len = strlen(rl_line);
-        void* memcheck = realloc(rl_line, (len + 2) * sizeof(char));
-
-        if (memcheck != NULL) {
-            rl_line[len] = '\n';
-            rl_line[len+1] = '\0';
-        } else {
+        int len = strlen(temp);
+        rl_line = calloc(len + 2, sizeof(char));
+        
+        if (rl_line == NULL) {
+            /* return empty line on memory error */
             yyerror("memory error");
-            rl_line[0] = '\0';
+
+            rl_line = temp;
+            *rl_line = '\0';
+        } else {
+            char* nul_term_ptr = stpcpy(rl_line, temp);
+            free(temp);
+
+            *nul_term_ptr++ = '\n';
+            *nul_term_ptr = '\0';
         }
+
+    } else {
+        rl_line = temp;
     }
 
 

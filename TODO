@@ -5,3 +5,5 @@ For functions maybe a structure which contains name, no. args and args list.
 
 There are conflicts at the moment, I'm not good enough at formal grammar to know
 how to reduce them.
+
+Valgrind reports errors in rl_gets.

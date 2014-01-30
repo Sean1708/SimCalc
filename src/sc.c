@@ -11,6 +11,7 @@ void usage(void);
 
 int qflag = 0;
 
+/* INPROMPT SHOULD ONLY BE NULL IN QUIET MODE */
 char* inprompt = ">> ";
 char* outprompt = "= ";
 
@@ -19,18 +20,23 @@ int main(int argc, char* argv[]) {
     char ch = '\0';
     while ((ch = getopt(argc, argv, "hq")) != -1) {
         switch (ch) {
-            /* suppress input and output prompts and error messages */
+            /* quiet mode */
             case 'q':
+                /* suppress input and output prompts and error messages */
                 qflag = 1;
-                /* inprompt should only be NULL in quiet mode */
                 inprompt = NULL;
                 outprompt = "\0";
                 break;
             /* help message */
             case 'h':
-            default:
                 usage();
                 exit(0);
+                break;
+            /* unknown option */
+            case '?':
+            default:
+                /* show usage but do not exit */
+                usage();
         }
     }
 
@@ -50,7 +56,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (line) free(line);
+    free(line);
     return 0;
 }
 
