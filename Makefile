@@ -20,13 +20,14 @@ install: sc
 	install  bin/sc  ~/.scripts
 	touch install
 
-sc: lex.l parse.y read.c read.h sc.c
+sc: lex.l parse.y read.c read.h base.c base.h sc.c
 	$(LEX)  -t src/lex.l > lex.c
 	$(YACC) --report all  src/parse.y
 	$(CC) $(CFLAGS)  -c -o lex.o  lex.c
 	$(CC) $(CFLAGS)  -c -o parse.o  parse.c
 	$(CC) $(CFLAGS)  -c -o read.o  src/read.c
-	$(CC) $(CFLAGS) $(LIBS)  parse.o lex.o read.o src/sc.c  -o bin/sc
+	$(CC) $(CFLAGS)  -c -o base.o  src/base.c
+	$(CC) $(CFLAGS) $(LIBS)  parse.o lex.o read.o base.o src/sc.c  -o bin/sc
 	rm lex.c lex.h lex.o parse.c parse.h parse.o read.o
 
 

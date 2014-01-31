@@ -3,8 +3,8 @@
  * function protoytpes.
  */
 
-#ifndef __PROTO_H__
-#define __PROTO_H__
+#ifndef __GLOBAL_H__
+#define __GLOBAL_H__
 
 #include <stdarg.h>
 
@@ -14,4 +14,4 @@ extern char* outprompt;
 
 void yyerror(const char* fmt, ...);
 
-#endif /* __PROTO_H__ */
+#endif /* __GLOBAL_H__ */

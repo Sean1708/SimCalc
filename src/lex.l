@@ -1,22 +1,23 @@
 %{
 #include <parse.h>
+#include <base.h>
 #include <global.h>
 %}
 
-    /* INTEGERS */
-DECIMAL [1-9][0-9]*
-HEXADEC 0x[0-9a-eA-E]+
+    /* NUMBERS */
+DECIMAL (0\.|[1-9]+[0-9]*\.?)[0-9]*
+HEXADEC 0x[0-9a-fA-F]+
 OCTAL   0[0-7]+
 BINARY  0b[01]+
-
-    /* FLOATS */
-FLOAT   [0-9]+\.[0-9]*
 STDFORM [0-9]+\.?[0-9]*[eE][-+]?[0-9]+
 
-    /* INVALID NUMBERS */
-BADHEX  0x[0-9a-eA-e]*[f-zF-Z]+
+    /* INVALID NUMBERS [^ \t}**/
+BADHEX  0x[0-9a-fA-F]*[g-zG-Z]+
 BADOCT  0[0-7]*[89]+
 BADBIN  0b[01]*[2-9]+
+
+    /* VARIABLES */
+NAME    [a-zA-Z_][a-zA-Z0-9_]*
 
     /* OPTIONS */
 %option header-file="lex.h"
@@ -27,42 +28,41 @@ BADBIN  0b[01]*[2-9]+
 
 
         /* NUMBERS */
-{DECIMAL}     { yylval.ival = strtoll(yytext, NULL, 10); return INT;    }
+{DECIMAL}       { yylval.fval = strtold(yytext, NULL); return NUM;        }
 
-{HEXADEC}     { yylval.ival = strtoll(yytext+2, NULL, 16); return INT;  }
+{HEXADEC}       { yylval.fval = hextold(yytext + 2); return NUM;          }
 
-{OCTAL}       { yylval.ival = strtoll(yytext+1, NULL, 8); return INT;   }
+{OCTAL}         { yylval.fval = octtold(yytext + 1); return NUM;          }
 
-{BINARY}      { yylval.ival = strtoll(yytext+2, NULL, 2); return INT;   }
+{BINARY}        { yylval.fval = bintold(yytext + 2); return NUM;          }
+ 
+{STDFORM}       { yylval.fval = strtold(yytext, NULL); return NUM;        }
 
-{FLOAT}       { yylval.fval = strtold(yytext, NULL); return FLT;        }
+ /* handle one or more zeros on their own */
+0+              { yylval.fval = 0; return NUM;                            }
 
-{STDFORM}     { yylval.fval = strtold(yytext, NULL); return FLT;        }
-
- /* handle one or more zeros on their own
-    set as integer to avoid loss of precision on int-only input */
-0+            { yylval.ival = 0; return INT;                            }
+        /* VARIABLES */
 
         /* OPERATORS */
-[-+*/%!()|;\n] { return *yytext;                                        }
+[-+*/%!()|=;\n] { return *yytext;                                         }
 
  /* power operators */
-"**"|"^"      { return POW;                                             }
+"**"|"^"        { return POW;                                             }
 
  /* floor division */
-"//"          { return FDIV;                                            }
+"//"            { return FDIV;                                            }
 
         /* STRUCTURE */
-[ \t]+        /* eat whitespace */
+[ \t]+          /* eat whitespace */
 
         /* ERRORS */
-{BADHEX}      { yyerror("invalid hexadecimal: %s", yytext);             }
+{BADHEX}        { yyerror("invalid hexadecimal: %s", yytext);             }
 
-{BADOCT}      { yyerror("invalid octal: %s", yytext);                   }
+{BADOCT}        { yyerror("invalid octal: %s", yytext);                   }
 
-{BADBIN}      { yyerror("invalid binary: %s", yytext);                  }
+{BADBIN}        { yyerror("invalid binary: %s", yytext);                  }
 
-.             { yyerror("unknown token: %s", yytext);                   }
+.               { yyerror("unknown token: %s", yytext);                   }
 
 
 %%
