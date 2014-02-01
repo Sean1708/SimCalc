@@ -36,6 +36,7 @@ typedef struct FuncRec {
 extern FuncRec* func_table;
 
 FuncRec* get_func(const char* func_name);
+char* prepend_sc(const char* func_name);
 void clear_func_table(void);
 
 #endif /* __LOADLIB_H__ */

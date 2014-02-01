@@ -10,6 +10,7 @@ Write a decent fucking Makefile.
 
 merge uservar and loadlib into one, maybe called table
 
-write the dylib of wrappers around math.h functions
+redo library loading, maybe use macros to create the function, also work in
+variables
 
 write a source file logging.[ch] which has yyerror and friends in

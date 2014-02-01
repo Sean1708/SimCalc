@@ -77,8 +77,10 @@ FuncRec* get_func(const char* func_name) {
 
     /* then see if the libraries have it */
     LibRec* search_libs = lib_table;
+    char* sc_func_name = prepend_sc(func_name);
+
     for (; search_libs != NULL; search_libs = search_libs->next) {
-        func_cb temp = dlsym(search_libs->lib, func_name);
+        func_cb temp = dlsym(search_libs->lib, sc_func_name);
 
         /* if it is found, add it to the function table and return it */
         if (temp != NULL) {
@@ -89,12 +91,26 @@ FuncRec* get_func(const char* func_name) {
             func_ptr->next = func_table;
             func_table = func_ptr;
 
-            return func_ptr;
+            break;
         }
     }
 
-    /* if it's still not been found, return NULL */
-    return NULL;
+
+    free(sc_func_name);
+    /* if it's never found func_ptr will be NULL */
+    return func_ptr;
+}
+
+char* prepend_sc(const char* func_name) {
+    int length = strlen(func_name) + 4;
+    char* new_name = calloc(length, sizeof(char));
+
+    strcpy(new_name, "sc_");
+    strcat(new_name, func_name);
+    new_name[length] = '\0';
+
+
+    return new_name;
 }
 
 void clear_func_table(void) {
