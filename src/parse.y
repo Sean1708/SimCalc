@@ -42,15 +42,15 @@ int had_error = 0;
 
 
 input:
-  /* empty */
-| input line
+  /* empty, don't need to reset had_error since nothing is done */
+| input line { had_error = 0; }
 ;
 
 line:
   endchar
 | assign endchar
-| expr endchar   { printf("%s%.15Lg\n", outprompt, $1); }
-| error endchar  { yyerrok;                             }
+| expr endchar   { if (!had_error) printf("%s%.15Lg\n", outprompt, $1); }
+| error endchar  { yyerrok;                                             }
 ;
 
 endchar:
@@ -97,6 +97,8 @@ expr:
 
 
 void yyerror(const char* fmt, ...) {
+    had_error = 1;
+
     if (qflag) return;
 
     va_list argp;
