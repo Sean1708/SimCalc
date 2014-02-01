@@ -8,5 +8,8 @@ how to reduce them.
 
 Write a decent fucking Makefile.
 
-in lex first search for already made variable, then make a new entry either way
-return ptr, set in bison
+merge uservar and loadlib into one, maybe called table
+
+write the dylib of wrappers around math.h functions
+
+write a source file logging.[ch] which has yyerror and friends in

@@ -1,5 +1,6 @@
 %{
 #include <uservar.h>
+#include <loadlib.h>
 #include <parse.h>
 #include <base.h>
 #include <global.h>
@@ -44,9 +45,12 @@ NAME    [a-zA-Z_][a-zA-Z0-9_]*
 
         /* VARIABLES */
 {NAME}          {
+    /* if a function with that name is found then return it, else try vars */
+    if ((yylval.func = get_func(yytext)) != NULL) {
+        return FUNC;
     /* if get_var returns NULL then the variable does not exist and must be
      * created, either way yylval.var is set to a VarRec* */
-    if ((yylval.var = get_var(yytext)) == NULL) {
+    } else if ((yylval.var = get_var(yytext)) == NULL) {
         yylval.var = create_var(yytext);
     }
 

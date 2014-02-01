@@ -3,6 +3,7 @@
 #include <global.h>
 #include <read.h>
 #include <uservar.h>
+#include <loadlib.h>
 #include <parse.h>
 #include <lex.h>
 
@@ -41,6 +42,8 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    load_lib("~/.scripts/mathlib.so");
+
     char* line = NULL;
     YY_BUFFER_STATE buf = NULL;
 
@@ -58,6 +61,8 @@ int main(int argc, char* argv[]) {
     }
 
     clear_var_table();
+    clear_func_table();
+    clear_lib_table();
     free(line);
     return 0;
 }

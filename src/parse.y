@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <uservar.h>
+#include <loadlib.h>
 #include <global.h>
 
 int yylex(void);
@@ -13,8 +14,10 @@ int had_error = 0;
 %union {
     long double fval;
     VarRec* var;
+    FuncRec* func;
 }
 
+%token <func> FUNC
 %token <var>  VAR
 %token <fval> NUM
 %type  <fval> expr
@@ -23,7 +26,6 @@ int had_error = 0;
 %left     '*' '/' '%' FDIV
 %nonassoc NEG
 %right    POW 
-%nonassoc FAC
 
 %output "parse.c"
 %defines
@@ -34,9 +36,6 @@ int had_error = 0;
 /**
  * input section is not needed at the moment since EOF is handled before yyparse
  * is even called but may be useful once sc can handle files
- */
-/**
- * if variable has no value and is not being initialised throw error.
  */
 %%
 
@@ -60,9 +59,10 @@ endchar:
 
 assign:
   VAR '=' expr { $1->value = $3; $1->init = 1; }
+;
 
 expr:
-  NUM                { $$ = $1;              }
+  NUM                { $$ = $1;               }
 | VAR                {
     if ($1->init == 1){
         $$ = $1->value;
@@ -70,14 +70,15 @@ expr:
         yyerror("variable %s has not been initialised", $1->name);
     }
 }
-| expr '+' expr      { $$ = $1 + $3;         }
-| expr '-' expr      { $$ = $1 - $3;         }
-| expr '*' expr      { $$ = $1 * $3;         }
-| expr '/' expr      { $$ = $1 / $3;         }
-| expr FDIV expr     { $$ = floorl($1 / $3); }
-| expr '%' expr      { $$ = fmodl($1, $3);   }
-| '-' expr %prec NEG { $$ = -$2;             }
-| expr POW expr      { $$ = powl($1, $3);    }
+| FUNC '(' expr ')'  { $$ = (*($1->func))($3) }
+| expr '+' expr      { $$ = $1 + $3;          }
+| expr '-' expr      { $$ = $1 - $3;          }
+| expr '*' expr      { $$ = $1 * $3;          }
+| expr '/' expr      { $$ = $1 / $3;          }
+| expr FDIV expr     { $$ = floorl($1 / $3);  }
+| expr '%' expr      { $$ = fmodl($1, $3);    }
+| '-' expr %prec NEG { $$ = -$2;              }
+| expr POW expr      { $$ = powl($1, $3);     }
 | expr '!'           {
     if ($1 < 0) {
         yyerror("factorial undefined for negative numbers");
@@ -88,8 +89,8 @@ expr:
         for (long double i = $1; i > 0; i--) $$ *= i;
     }
 }
-| '|' expr '|'       { $$ = fabsl($2);       }
-| '(' expr ')'       { $$ = $2;              }
+| '|' expr '|'       { $$ = fabsl($2);        }
+| '(' expr ')'       { $$ = $2;               }
 ;
 
 
