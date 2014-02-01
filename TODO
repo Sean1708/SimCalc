@@ -6,4 +6,7 @@ For functions maybe a structure which contains name, no. args and args list.
 There are conflicts at the moment, I'm not good enough at formal grammar to know
 how to reduce them.
 
-Valgrind reports errors in rl_gets.
+Write a decent fucking Makefile.
+
+in lex first search for already made variable, then make a new entry either way
+return ptr, set in bison
