@@ -1,7 +1,4 @@
-When implementing exit command, might need to use an extern int as test variable
-for the while loop and set it to false on exit command.
-
-For functions maybe a structure which contains name, no. args and args list.
+Generalise functions to be able to take multiple arguments.
 
 There are conflicts at the moment, I'm not good enough at formal grammar to know
 how to reduce them.
