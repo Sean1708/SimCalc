@@ -27,7 +27,7 @@ mathlib.so: mathlib.c
 	$(CC) $(CFLAGS)  -shared -o build/mathlib.so  mathlib.o
 	rm mathlib.o
 
-sc: lex.l parse.y read.c read.h base.c base.h uservar.c uservar.h loadlib.c loadlib.h sc.c
+sc: lex.l parse.y read.c read.h base.c base.h uservar.c uservar.h loadlib.c loadlib.h command.h command.c sc.c
 	$(LEX)  -t src/lex.l > lex.c
 	$(YACC) --report all  src/parse.y
 	$(CC) $(CFLAGS)  -c -o lex.o  lex.c
@@ -36,8 +36,9 @@ sc: lex.l parse.y read.c read.h base.c base.h uservar.c uservar.h loadlib.c load
 	$(CC) $(CFLAGS)  -c -o base.o  src/base.c
 	$(CC) $(CFLAGS)  -c -o uservar.o  src/uservar.c
 	$(CC) $(CFLAGS)  -c -o loadlib.o  src/loadlib.c
-	$(CC) $(CFLAGS) $(LIBS)  parse.o lex.o read.o base.o uservar.o loadlib.o src/sc.c  -o bin/sc
-	rm lex.c lex.h lex.o parse.c parse.h parse.o read.o base.o uservar.o loadlib.o
+	$(CC) $(CFLAGS)  -c -o command.o  src/command.c
+	$(CC) $(CFLAGS) $(LIBS)  parse.o lex.o read.o base.o uservar.o loadlib.o command.o src/sc.c  -o bin/sc
+	rm lex.c lex.h lex.o parse.c parse.h parse.o read.o base.o uservar.o loadlib.o command.o
 
 
 # THE TESTS

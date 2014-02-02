@@ -11,6 +11,8 @@
 void usage(void);
 
 
+int program_running = 1;
+
 int qflag = 0;
 
 /* INPROMPT SHOULD ONLY BE NULL IN QUIET MODE */
@@ -47,12 +49,12 @@ int main(int argc, char* argv[]) {
     char* line = NULL;
     YY_BUFFER_STATE buf = NULL;
 
-    while (1) {
+    while (program_running) {
         line = rl_gets(inprompt);
 
         if (line == NULL) {
             if (!qflag) printf("Goodbye!\n");
-            break;
+            program_running = 0;
         } else {
             buf = yy_scan_string(line);
             yyparse();

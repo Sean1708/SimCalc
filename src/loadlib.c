@@ -23,7 +23,7 @@ LibRec* load_lib(const char* path) {
         temp->next = lib_table;
         lib_table = temp;
 
-        fprintf(stderr, "$ library loaded: %s\n", exp_path);
+        if (!qflag) printf("$ library loaded: %s\n", exp_path);
     } else {
         yyerror("library not found: %s", exp_path);
     }

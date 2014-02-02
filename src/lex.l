@@ -20,6 +20,10 @@ BADBIN  0b[01]*[2-9]+
 
     /* VARIABLES */
 NAME    [a-zA-Z_][a-zA-Z0-9_]*
+COMMAND \$[a-zA-Z]+
+
+    /* CONDITIONS */
+%x cmdarg
 
     /* OPTIONS */
 %option header-file="lex.h"
@@ -30,21 +34,21 @@ NAME    [a-zA-Z_][a-zA-Z0-9_]*
 
 
         /* NUMBERS */
-{DECIMAL}       { yylval.fval = strtold(yytext, NULL); return NUM;        }
+{DECIMAL}          { yylval.fval = strtold(yytext, NULL); return NUM;         }
 
-{HEXADEC}       { yylval.fval = hextold(yytext + 2); return NUM;          }
+{HEXADEC}          { yylval.fval = hextold(yytext + 2); return NUM;           }
 
-{OCTAL}         { yylval.fval = octtold(yytext + 1); return NUM;          }
+{OCTAL}            { yylval.fval = octtold(yytext + 1); return NUM;           }
 
-{BINARY}        { yylval.fval = bintold(yytext + 2); return NUM;          }
+{BINARY}           { yylval.fval = bintold(yytext + 2); return NUM;           }
  
-{STDFORM}       { yylval.fval = strtold(yytext, NULL); return NUM;        }
+{STDFORM}          { yylval.fval = strtold(yytext, NULL); return NUM;         }
 
  /* handle one or more zeros on their own */
-0+              { yylval.fval = 0; return NUM;                            }
+0+                 { yylval.fval = 0; return NUM;                             }
 
         /* VARIABLES */
-{NAME}          {
+{NAME}             {
     /* if a function with that name is found then return it, else try vars */
     if ((yylval.func = get_func(yytext)) != NULL) {
         return FUNC;
@@ -57,26 +61,33 @@ NAME    [a-zA-Z_][a-zA-Z0-9_]*
     return VAR;
 }
 
+{COMMAND}          { yylval.sval = strdup(yytext); BEGIN(cmdarg); return CMD; }
+
+ /* allow command arguments to be any characters not used for parsing */
+<cmdarg>[^; \t\n]+ { yylval.sval = strdup(yytext); return CMDARG;             }
+
+<cmdarg>[;\n]      { BEGIN(INITIAL); return *yytext;                          }
+
         /* OPERATORS */
-[-+*/%!()|=;\n] { return *yytext;                                         }
+[-+*/%!()|=;\n]    { return *yytext;                                          }
 
  /* power operators */
-"**"|"^"        { return POW;                                             }
+"**"|"^"           { return POW;                                              }
 
  /* floor division */
-"//"            { return FDIV;                                            }
+"//"               { return FDIV;                                             }
 
         /* STRUCTURE */
-[ \t]+          /* eat whitespace */
+<*>[ \t]+             /* eat whitespace */
 
         /* ERRORS */
-{BADHEX}        { yyerror("invalid hexadecimal: %s", yytext);             }
+{BADHEX}           { yyerror("invalid hexadecimal: %s", yytext);              }
 
-{BADOCT}        { yyerror("invalid octal: %s", yytext);                   }
+{BADOCT}           { yyerror("invalid octal: %s", yytext);                    }
 
-{BADBIN}        { yyerror("invalid binary: %s", yytext);                  }
+{BADBIN}           { yyerror("invalid binary: %s", yytext);                   }
 
-.               { yyerror("unknown token: %s", yytext);                   }
+.                  { yyerror("unknown token: %s", yytext);                    }
 
 
 %%

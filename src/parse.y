@@ -4,6 +4,7 @@
 #include <math.h>
 #include <uservar.h>
 #include <loadlib.h>
+#include <command.h>
 #include <global.h>
 
 int yylex(void);
@@ -13,10 +14,12 @@ int had_error = 0;
 
 %union {
     long double fval;
+    char* sval;
     VarRec* var;
     FuncRec* func;
 }
 
+%token <sval> CMD CMDARG
 %token <func> FUNC
 %token <var>  VAR
 %token <fval> NUM
@@ -33,23 +36,20 @@ int had_error = 0;
 %error-verbose
 
 
-/**
- * input section is not needed at the moment since EOF is handled before yyparse
- * is even called but may be useful once sc can handle files
- */
 %%
 
 
 input:
-  /* empty, don't need to reset had_error since nothing is done */
+  /* empty */
 | input line { had_error = 0; }
 ;
 
 line:
   endchar
+| command endchar
 | assign endchar
-| expr endchar   { if (!had_error) printf("%s%.15Lg\n", outprompt, $1); }
-| error endchar  { yyerrok;                                             }
+| expr endchar    { if (!had_error) printf("%s%.15Lg\n", outprompt, $1); }
+| error endchar   { yyerrok;                                             }
 ;
 
 endchar:
@@ -57,12 +57,17 @@ endchar:
 | '\n'
 ;
 
+command:
+  CMD        { run_command($1, NULL); free($1);         }
+| CMD CMDARG { run_command($1, $2); free($1); free($2); }
+;
+
 assign:
   VAR '=' expr { $1->value = $3; $1->init = 1; }
 ;
 
 expr:
-  NUM                { $$ = $1;               }
+  NUM                { $$ = $1;                }
 | VAR                {
     if ($1->init == 1){
         $$ = $1->value;
@@ -70,15 +75,15 @@ expr:
         yyerror("variable %s has not been initialised", $1->name);
     }
 }
-| FUNC '(' expr ')'  { $$ = (*($1->func))($3) }
-| expr '+' expr      { $$ = $1 + $3;          }
-| expr '-' expr      { $$ = $1 - $3;          }
-| expr '*' expr      { $$ = $1 * $3;          }
-| expr '/' expr      { $$ = $1 / $3;          }
-| expr FDIV expr     { $$ = floorl($1 / $3);  }
-| expr '%' expr      { $$ = fmodl($1, $3);    }
-| '-' expr %prec NEG { $$ = -$2;              }
-| expr POW expr      { $$ = powl($1, $3);     }
+| FUNC '(' expr ')'  { $$ = (*($1->func))($3); }
+| expr '+' expr      { $$ = $1 + $3;           }
+| expr '-' expr      { $$ = $1 - $3;           }
+| expr '*' expr      { $$ = $1 * $3;           }
+| expr '/' expr      { $$ = $1 / $3;           }
+| expr FDIV expr     { $$ = floorl($1 / $3);   }
+| expr '%' expr      { $$ = fmodl($1, $3);     }
+| '-' expr %prec NEG { $$ = -$2;               }
+| expr POW expr      { $$ = powl($1, $3);      }
 | expr '!'           {
     if ($1 < 0) {
         yyerror("factorial undefined for negative numbers");
@@ -89,8 +94,8 @@ expr:
         for (long double i = $1; i > 0; i--) $$ *= i;
     }
 }
-| '|' expr '|'       { $$ = fabsl($2);        }
-| '(' expr ')'       { $$ = $2;               }
+| '|' expr '|'       { $$ = fabsl($2);         }
+| '(' expr ')'       { $$ = $2;                }
 ;
 
 

@@ -8,6 +8,7 @@
 
 #include <stdarg.h>
 
+extern int program_running;
 extern int qflag;
 extern char* inprompt;
 extern char* outprompt;
