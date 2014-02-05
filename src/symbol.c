@@ -28,15 +28,11 @@ SymRec* get_sym(const char* sym_name) {
     char* sc_sym_name = prepend_sc(sym_name);
 
     for (; search_libs != NULL; search_libs = search_libs->next) {
-        func_cb temp = dlsym(search_libs->lib, sc_sym_name);
+        sym_constructor temp = dlsym(search_libs->lib, sc_sym_name);
 
         /* if it is found, add it to the function table and return it */
         if (temp != NULL) {
-            sym_ptr = malloc(sizeof(SymRec));
-            sym_ptr->name = strdup(sym_name);
-            sym_ptr->init = 1;
-            sym_ptr->type = 'f';
-            sym_ptr->value.func = temp;
+            sym_ptr = (*temp)();
 
             sym_ptr->next = sym_table;
             sym_table = sym_ptr;

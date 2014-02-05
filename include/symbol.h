@@ -25,6 +25,7 @@ typedef struct SymRec {
     struct SymRec* next;
 } SymRec;
 
+typedef SymRec* (* sym_constructor)(void);
 extern SymRec* sym_table;
 
 SymRec* create_var(const char* sym_name);

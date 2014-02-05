@@ -2,67 +2,70 @@
  * Some useful functions often required by calculators.
  */
 #include <math.h>
+#include <extend.h>
 
-long double sc_sqrt(long double num) {
+SC_VAR(pi, M_PI)
+
+SC_FUNC(sqrt, num) {
     return sqrtl(num);
 }
 
-long double sc_exp(long double num) {
+SC_FUNC(exp, num) {
     return expl(num);
 }
 
-long double sc_ln(long double num) {
+SC_FUNC(ln, num) {
     return logl(num);
 }
 
-long double sc_log(long double num) {
+SC_FUNC(log, num) {
     return log10l(num);
 }
 
-long double sc_cos(long double num) {
+SC_FUNC(cos, num) {
     return cosl(num);
 }
 
-long double sc_sin(long double num) {
+SC_FUNC(sin, num) {
     return sinl(num);
 }
 
-long double sc_tan(long double num) {
+SC_FUNC(tan, num) {
     return tanl(num);
 }
 
-long double sc_cosh(long double num) {
+SC_FUNC(cosh, num) {
     return coshl(num);
 }
 
-long double sc_sinh(long double num) {
+SC_FUNC(sinh, num) {
     return sinhl(num);
 }
 
-long double sc_tanh(long double num) {
+SC_FUNC(tanh, num) {
     return tanhl(num);
 }
 
-long double sc_acos(long double num) {
+SC_FUNC(acos, num) {
     return acosl(num);
 }
 
-long double sc_asin(long double num) {
+SC_FUNC(asin, num) {
     return asinl(num);
 }
 
-long double sc_atan(long double num) {
+SC_FUNC(atan, num) {
     return atanl(num);
 }
 
-long double sc_acosh(long double num) {
+SC_FUNC(acosh, num) {
     return acoshl(num);
 }
 
-long double sc_asinh(long double num) {
+SC_FUNC(asinh, num) {
     return asinhl(num);
 }
 
-long double sc_atanh(long double num) {
+SC_FUNC(atanh, num) {
     return atanhl(num);
 }
