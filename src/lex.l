@@ -55,7 +55,7 @@ COMMAND \$[a-zA-Z]+
         yylval.sym = create_var(yytext);
     }
     
-    return yylval.sym->type;
+    return (yylval.sym->type == 'v') ? VAR : FUNC;
 }
 
 {COMMAND}          { yylval.sval = strdup(yytext); BEGIN(cmdarg); return CMD; }

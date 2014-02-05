@@ -7,7 +7,7 @@ SymRec* create_var(const char* sym_name) {
     SymRec* temp = malloc(sizeof(SymRec));
     temp->name = strdup(sym_name);
     temp->init = 0;
-    temp->type = VAR;
+    temp->type = 'v';
     temp->value.var = nan(NULL);
 
     temp->next = sym_table;
@@ -35,7 +35,7 @@ SymRec* get_sym(const char* sym_name) {
             sym_ptr = malloc(sizeof(SymRec));
             sym_ptr->name = strdup(sym_name);
             sym_ptr->init = 1;
-            sym_ptr->type = FUNC;
+            sym_ptr->type = 'f';
             sym_ptr->value.func = temp;
 
             sym_ptr->next = sym_table;

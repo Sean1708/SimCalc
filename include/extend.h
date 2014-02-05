@@ -10,6 +10,7 @@
 #include <string.h>
 #include <global.h>
 
+/* typedefs etc. for loading libraries */
 struct LibRec;
 typedef struct LibRec {
     char* path;
@@ -22,6 +23,8 @@ extern LibRec* lib_table;
 LibRec* load_lib(const char* path);
 char* tilde_expansion(const char* path);
 void clear_lib_table(void);
+
+
 
 
 #endif /* __EXTEND_H__ */

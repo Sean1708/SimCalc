@@ -17,7 +17,7 @@ struct SymRec;
 typedef struct SymRec {
     char* name;
     int init;  /* set to one once the variable has been initialised */
-    int type;  /* VAR or FUNC */
+    char type;  /* 'v' - variable; 'f' - function */
     union {
         func_cb func;
         long double var;
