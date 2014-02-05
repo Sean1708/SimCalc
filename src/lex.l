@@ -1,6 +1,6 @@
 %{
-#include <uservar.h>
-#include <loadlib.h>
+#include <symbol.h>
+#include <extend.h>
 #include <parse.h>
 #include <base.h>
 #include <global.h>
@@ -49,16 +49,13 @@ COMMAND \$[a-zA-Z]+
 
         /* VARIABLES */
 {NAME}             {
-    /* if a function with that name is found then return it, else try vars */
-    if ((yylval.func = get_func(yytext)) != NULL) {
-        return FUNC;
-    /* if get_var returns NULL then the variable does not exist and must be
-     * created, either way yylval.var is set to a VarRec* */
-    } else if ((yylval.var = get_var(yytext)) == NULL) {
-        yylval.var = create_var(yytext);
+    /* look for a symbol either function or variable */
+    if ((yylval.sym = get_sym(yytext)) == NULL) {
+        /* if it doesn't exist, create a variable */
+        yylval.sym = create_var(yytext);
     }
-
-    return VAR;
+    
+    return yylval.sym->type;
 }
 
 {COMMAND}          { yylval.sval = strdup(yytext); BEGIN(cmdarg); return CMD; }

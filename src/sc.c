@@ -2,8 +2,8 @@
 #include <unistd.h>
 #include <global.h>
 #include <read.h>
-#include <uservar.h>
-#include <loadlib.h>
+#include <symbol.h>
+#include <extend.h>
 #include <parse.h>
 #include <lex.h>
 
@@ -62,8 +62,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    clear_var_table();
-    clear_func_table();
+    clear_sym_table();
     clear_lib_table();
     free(line);
     return 0;

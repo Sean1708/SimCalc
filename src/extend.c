@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include <global.h>
-#include <loadlib.h>
+#include <extend.h>
 
 LibRec* lib_table = NULL;
 
 LibRec* load_lib(const char* path) {
     char* exp_path = tilde_expansion(path);
+
     /* don't load libraries twice */
     LibRec* search_libs = lib_table;
     for (; search_libs != NULL; search_libs = search_libs->next) {
@@ -61,64 +61,6 @@ void clear_lib_table(void) {
 
         if (temp->path) free(temp->path);
         if (temp->lib) dlclose(temp->lib);
-        free(temp);
-    }
-}
-
-
-FuncRec* func_table = NULL;
-
-FuncRec* get_func(const char* func_name) {
-    /* see if function has already been loaded */
-    FuncRec* func_ptr = func_table;
-    for (; func_ptr != NULL; func_ptr = func_ptr->next) {
-        if (strcmp(func_ptr->name, func_name) == 0) return func_ptr;
-    }
-
-    /* then see if the libraries have it */
-    LibRec* search_libs = lib_table;
-    char* sc_func_name = prepend_sc(func_name);
-
-    for (; search_libs != NULL; search_libs = search_libs->next) {
-        func_cb temp = dlsym(search_libs->lib, sc_func_name);
-
-        /* if it is found, add it to the function table and return it */
-        if (temp != NULL) {
-            func_ptr = malloc(sizeof(FuncRec));
-            func_ptr->name = strdup(func_name);
-            func_ptr->func = temp;
-
-            func_ptr->next = func_table;
-            func_table = func_ptr;
-
-            break;
-        }
-    }
-
-
-    free(sc_func_name);
-    /* if it's never found func_ptr will be NULL */
-    return func_ptr;
-}
-
-char* prepend_sc(const char* func_name) {
-    int length = strlen(func_name) + 4;
-    char* new_name = calloc(length, sizeof(char));
-
-    strcpy(new_name, "sc_");
-    strcat(new_name, func_name);
-    new_name[length] = '\0';
-
-
-    return new_name;
-}
-
-void clear_func_table(void) {
-    FuncRec* temp = func_table;
-    for (; temp != NULL; temp = func_table) {
-        func_table = temp->next;
-
-        if (temp->name) free(temp->name);
         free(temp);
     }
 }

@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <uservar.h>
-#include <loadlib.h>
+#include <symbol.h>
+#include <extend.h>
 #include <command.h>
 #include <global.h>
 
@@ -15,13 +15,11 @@ int had_error = 0;
 %union {
     long double fval;
     char* sval;
-    VarRec* var;
-    FuncRec* func;
+    SymRec* sym;
 }
 
 %token <sval> CMD CMDARG
-%token <func> FUNC
-%token <var>  VAR
+%token <sym>  FUNC VAR
 %token <fval> NUM
 %type  <fval> expr
 
@@ -63,27 +61,27 @@ command:
 ;
 
 assign:
-  VAR '=' expr { $1->value = $3; $1->init = 1; }
+  VAR '=' expr { $1->value.var = $3; $1->init = 1; }
 ;
 
 expr:
-  NUM                { $$ = $1;                }
+  NUM                { $$ = $1;                      }
 | VAR                {
     if ($1->init == 1){
-        $$ = $1->value;
+        $$ = $1->value.var;
     } else {
         yyerror("variable %s has not been initialised", $1->name);
     }
 }
-| FUNC '(' expr ')'  { $$ = (*($1->func))($3); }
-| expr '+' expr      { $$ = $1 + $3;           }
-| expr '-' expr      { $$ = $1 - $3;           }
-| expr '*' expr      { $$ = $1 * $3;           }
-| expr '/' expr      { $$ = $1 / $3;           }
-| expr FDIV expr     { $$ = floorl($1 / $3);   }
-| expr '%' expr      { $$ = fmodl($1, $3);     }
-| '-' expr %prec NEG { $$ = -$2;               }
-| expr POW expr      { $$ = powl($1, $3);      }
+| FUNC '(' expr ')'  { $$ = (*($1->value.func))($3); }
+| expr '+' expr      { $$ = $1 + $3;                 }
+| expr '-' expr      { $$ = $1 - $3;                 }
+| expr '*' expr      { $$ = $1 * $3;                 }
+| expr '/' expr      { $$ = $1 / $3;                 }
+| expr FDIV expr     { $$ = floorl($1 / $3);         }
+| expr '%' expr      { $$ = fmodl($1, $3);           }
+| '-' expr %prec NEG { $$ = -$2;                     }
+| expr POW expr      { $$ = powl($1, $3);            }
 | expr '!'           {
     if ($1 < 0) {
         yyerror("factorial undefined for negative numbers");
@@ -94,8 +92,8 @@ expr:
         for (long double i = $1; i > 0; i--) $$ *= i;
     }
 }
-| '|' expr '|'       { $$ = fabsl($2);         }
-| '(' expr ')'       { $$ = $2;                }
+| '|' expr '|'       { $$ = fabsl($2);               }
+| '(' expr ')'       { $$ = $2;                      }
 ;
 
 

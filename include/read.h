@@ -1,3 +1,6 @@
+/**
+ * Code for reading an arbitrarily long line from input.
+ */
 #ifndef __READ_H__
 #define __READ_H__
 

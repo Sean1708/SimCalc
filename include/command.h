@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <loadlib.h>
+#include <extend.h>
 #include <global.h>
 
 void run_command(const char* cmd, const char* arg);

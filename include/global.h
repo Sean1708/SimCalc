@@ -1,4 +1,4 @@
-/*
+/**
  * Contains anything which is needed globally, like global variables or certain
  * function protoytpes.
  */
