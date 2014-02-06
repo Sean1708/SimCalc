@@ -1,16 +1,21 @@
-%{
+%code top {
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+}
+
+%code requires {
 #include <symbol.h>
 #include <extend.h>
 #include <command.h>
 #include <global.h>
+}
 
+%code {
 int yylex(void);
 
 int had_error = 0;
-%}
+}
 
 %union {
     long double fval;

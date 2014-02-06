@@ -4,6 +4,8 @@
 #include <math.h>
 #include <extend.h>
 
+SC_VAR(eu, M_E)
+
 SC_VAR(pi, M_PI)
 
 SC_FUNC(sqrt, num) {

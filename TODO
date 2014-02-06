@@ -1,11 +1,14 @@
 Generalise functions to be able to take multiple arguments.
+argument-list:
+  expr
+| argument-list
+| expr ',' argument-list
+;
+Append expr to a global long double pointer.
 
 There are conflicts at the moment, I'm not good enough at formal grammar to know
 how to reduce them.
 
 Write a decent fucking Makefile.
 
-merge uservar and loadlib into one, maybe called table
-
-redo library loading, maybe use macros to create the function, also work in
-variables
+Track flags with a single int and macros.
