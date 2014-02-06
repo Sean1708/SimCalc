@@ -14,6 +14,7 @@ void usage(void);
 int program_running = 1;
 
 int qflag = 0;
+int vflag = 0;
 
 /* INPROMPT SHOULD ONLY BE NULL IN QUIET MODE */
 char* inprompt = ">> ";
@@ -22,14 +23,25 @@ char* outprompt = "= ";
 
 int main(int argc, char* argv[]) {
     char ch = '\0';
-    while ((ch = getopt(argc, argv, "hq")) != -1) {
+    while ((ch = getopt(argc, argv, "hqv")) != -1) {
         switch (ch) {
+            /* verbose mode */
+            case 'v':
+                /* force sc to run normally regardless of stdin or stdout */
+                if (qflag) {
+                    usage();
+                    exit(-1);
+                }
+                vflag = 1;
+                break;
             /* quiet mode */
             case 'q':
                 /* suppress input and output prompts and error messages */
+                if (vflag) {
+                    usage();
+                    exit(-1);
+                }
                 qflag = 1;
-                inprompt = NULL;
-                outprompt = "\0";
                 break;
             /* help message */
             case 'h':
@@ -42,6 +54,13 @@ int main(int argc, char* argv[]) {
                 /* show usage but do not exit */
                 usage();
         }
+    }
+
+    /* default quiet mode when either stdin or stdout are not interactive */
+    if (!(isatty(0) && isatty(1)) && !vflag) qflag = 1;
+    if (qflag) {
+        inprompt = NULL;
+        outprompt = "\0";
     }
 
     load_lib("~/.scripts/mathlib.so");
@@ -70,7 +89,8 @@ int main(int argc, char* argv[]) {
 
 
 void usage(void) {
-    fprintf(stderr, "usage: sc [options]\n");
+    fprintf(stderr, "usage: sc [-h] [-q|-v]\n");
     fprintf(stderr, "  -h      print this help message\n");
     fprintf(stderr, "  -q      suppress prompts and error messages\n");
+    fprintf(stderr, "  -v      run sc normally regardless of stdin and stdout\n");
 }

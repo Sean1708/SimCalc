@@ -2,7 +2,7 @@ Generalise functions to be able to take multiple arguments.
 argument-list:
   expr
 | argument-list
-| expr ',' argument-list
+| argument-list ',' expr
 ;
 Append expr to a global long double pointer.
 
@@ -12,3 +12,7 @@ how to reduce them.
 Write a decent fucking Makefile.
 
 Track flags with a single int and macros.
+
+non_readline_readline is leaking memory, it's not much but it bothers me.
+
+write automated tests

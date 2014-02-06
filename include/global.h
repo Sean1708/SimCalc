@@ -11,7 +11,10 @@
 
 extern int program_running;
 extern int had_error;
+
 extern int qflag;
+extern int vflag;
+
 extern char* inprompt;
 extern char* outprompt;
 
