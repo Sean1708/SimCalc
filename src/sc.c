@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
         switch (ch) {
             /* verbose mode */
             case 'v':
-                /* force sc to run normally for non-interactive stdin */
+                /* force sc to run normally regardless of stdin or stdout */
                 if (qflag) {
                     usage();
                     exit(-1);
@@ -56,8 +56,8 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    /* default quiet mode when stdin is not interactive */
-    if (!(isatty(0) || vflag)) qflag = 1;
+    /* default quiet mode when either stdin or stdout are not interactive */
+    if (!(isatty(0) && isatty(1)) && !vflag) qflag = 1;
     if (qflag) {
         inprompt = NULL;
         outprompt = "\0";
@@ -92,5 +92,5 @@ void usage(void) {
     fprintf(stderr, "usage: sc [-h] [-q|-v]\n");
     fprintf(stderr, "  -h      print this help message\n");
     fprintf(stderr, "  -q      suppress prompts and error messages\n");
-    fprintf(stderr, "  -v      run sc normally when stdin is a pipe or redirect\n");
+    fprintf(stderr, "  -v      run sc normally regardless of stdin and stdout\n");
 }
