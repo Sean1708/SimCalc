@@ -64,6 +64,9 @@ int main(int argc, char* argv[]) {
     }
 
     load_lib("~/.scripts/mathlib.so");
+	SymRec* ans = create_var("ans");
+	ans->value.var = 0;
+	ans->init = 1;
 
     char* line = NULL;
     YY_BUFFER_STATE buf = NULL;

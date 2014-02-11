@@ -51,7 +51,13 @@ line:
   endchar
 | command endchar
 | assign endchar
-| expr endchar    { if (!had_error) printf("%s%.15Lg\n", outprompt, $1); }
+| expr endchar    {
+	if (!had_error) {
+		printf("%s%.15Lg\n", outprompt, $1);
+		SymRec* ans = get_sym("ans");
+		ans->value.var = $1;
+	}
+}
 | error endchar   { yyerrok;                                             }
 ;
 
