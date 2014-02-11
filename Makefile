@@ -10,12 +10,10 @@ vpath %.h       include
 vpath %.c       src
 vpath %.l       src
 vpath %.y       src
-vpath %_tests   tests
-vpath %_tests.c tests
 
 
 # THE BUILD
-all: sc mathlib.so install
+all: sc mathlib.so install tests
 
 install: sc
 	install  bin/sc  ~/.scripts
@@ -43,7 +41,9 @@ sc: lex.l parse.y read.c read.h base.c base.h symbol.c symbol.h extend.c extend.
 
 
 # THE TESTS
-
+.PHONY: tests
+tests:
+	sh ./tests.sh
 
 # THE CLEANER - leave rm -rf `find . -name "*.dSYM"` at top
 clean:

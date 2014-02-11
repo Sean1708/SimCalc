@@ -15,4 +15,10 @@ Track flags with a single int and macros.
 
 non_readline_readline is leaking memory, it's not much but it bothers me.
 
+Verbose mode does not work nicely with redirected stdout.
+
 write automated tests
+
+predefined varible ans, with previous answer
+
+trunc()
