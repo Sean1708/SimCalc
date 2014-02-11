@@ -8,6 +8,22 @@ SC_VAR(eu, M_E)
 
 SC_VAR(pi, M_PI)
 
+SC_FUNC(ceil, num) {
+	return ceill(num);
+}
+
+SC_FUNC(floor, num) {
+	return floorl(num);
+}
+
+SC_FUNC(trunc, num) {
+	return truncl(num);
+}
+
+SC_FUNC(round, num) {
+	return roundl(num);
+}
+
 SC_FUNC(sqrt, num) {
     return sqrtl(num);
 }
