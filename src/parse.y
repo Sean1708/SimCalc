@@ -58,7 +58,7 @@ line:
 		ans->value.var = $1;
 	}
 }
-| error endchar   { yyerrok;                                             }
+| error endchar   { yyerrok; }
 ;
 
 endchar:

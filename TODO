@@ -17,4 +17,5 @@ non_readline_readline is leaking memory, it's not much but it bothers me.
 
 Verbose mode does not work nicely with redirected stdout.
 
-trunc()
+assignment operators; causes sc to expect an = whenever a variable begins a line
+and is succeeded by an operator
