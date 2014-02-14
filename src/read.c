@@ -16,9 +16,9 @@ static char* rl_line = NULL;
  * was done by assigning rl_line to [non_readline_]readline then reallocating
  * the result so it had room to append a newline. Apparently this was vile sin.
  *
- * Instead I use a temporary pointer and allocate then copy instead of
+ * Instead I use a rl_lineorary pointer and allocate then copy instead of
  * reallocating. If a null pointer or empty string is returned then no newline
- * needs to be appended and so rl_line can just be set to temp and can be freed
+ * needs to be appended and so rl_line can just be set to rl_line and can be freed
  * later. Similarly, if malloc fails.
  */
 char* rl_gets(char* prompt) {
@@ -27,39 +27,31 @@ char* rl_gets(char* prompt) {
         rl_line = NULL;
     }
 
-    char* temp = NULL;
-
     if (prompt == NULL) {
-        temp = non_readline_readline();
+        rl_line = non_readline_readline();
     } else {
-        temp = readline(prompt);
+        rl_line = readline(prompt);
     }
 
     /* only add to history list if line has text in it */
-    if (temp && *temp) {
-        add_history(temp);
+    if (rl_line && *rl_line) {
+        add_history(rl_line);
 
         /* append newline to the end so bison parses properly */
-        int len = strlen(temp);
-        rl_line = calloc(len + 2, sizeof(char));
+        int len = strlen(rl_line);
+        char* temp = realloc(rl_line, (len + 2) * sizeof(char));
         
-        if (rl_line == NULL) {
+        if (temp == NULL) {
             /* return empty line on memory error */
             yyerror("memory error");
-
-            rl_line = temp;
             *rl_line = '\0';
         } else {
-            char* nul_term_ptr = stpcpy(rl_line, temp);
-            free(temp);
-
-            *nul_term_ptr++ = '\n';
-            *nul_term_ptr = '\0';
+			rl_line = temp;
+			rl_line[len] = '\n';
+			rl_line[len+1] = '\0';
         }
 
-    } else {
-        rl_line = temp;
-    }
+    } 
 
 
     return rl_line;
@@ -96,14 +88,16 @@ char* non_readline_readline(void) {
         /* only realloc if we haven't reached the end of line */
         if (reading) {
             length += 256;
-            void* memcheck = realloc(str, length * sizeof(char));
+            char* memcheck = realloc(str, length * sizeof(char));
 
             if (memcheck == NULL) {
                 yyerror("memory error");
                 str[0] = '\0';
 
                 return str;
-            }
+            } else {
+				str = memcheck;
+			}
         }
     }
 

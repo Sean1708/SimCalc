@@ -1,10 +1,4 @@
-Generalise functions to be able to take multiple arguments.
-argument-list:
-  expr
-| argument-list
-| argument-list ',' expr
-;
-Append expr to a global long double pointer.
+implement some sort of help command
 
 There are conflicts at the moment, I'm not good enough at formal grammar to know
 how to reduce them.
@@ -15,7 +9,13 @@ Track flags with a single int and macros.
 
 non_readline_readline is leaking memory, it's not much but it bothers me.
 
+I may have been using realloc wrong so I'll try switching back to it.
+
 Verbose mode does not work nicely with redirected stdout.
 
 assignment operators; causes sc to expect an = whenever a variable begins a line
 and is succeeded by an operator
+
+multiple argument functions
+
+memory checking in symbol.c
